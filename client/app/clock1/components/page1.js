@@ -16,7 +16,9 @@ const Page2 = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [audio, setAudio] = useState(null);
-  const [time, setTime] = useState(25 * 60);
+  const [time, setTime] = useState(25 * 60); // Start with 25 minutes for work
+  const [isWorkTime, setIsWorkTime] = useState(true); // True means work, false means break
+  const [sessionType, setSessionType] = useState("Work"); // Session type text: Work / Break
 
   // Initialize or update audio when track index changes
   useEffect(() => {
@@ -61,8 +63,57 @@ const Page2 = () => {
         setTime((prevTime) => prevTime - 1);
       }, 1000);
       return () => clearInterval(interval);
+    } else if (time === 0) {
+      handleSessionChange();
     }
   }, [isPlaying, time]);
+
+  // Handle switching between work and break sessions
+  const handleSessionChange = () => {
+    if (isWorkTime) {
+      // Break time: 5 minutes
+      setTime(5 * 60); // Set time for break
+      setIsWorkTime(false);
+      setSessionType("Break");
+
+      // Send WhatsApp message using Twilio for break
+      sendMessage("It's break time! Take a rest!");
+    } else {
+      // Work time: 25 minutes
+      setTime(25 * 60); // Set time for work
+      setIsWorkTime(true);
+      setSessionType("Work");
+
+      // Send WhatsApp message using Twilio for work
+      sendMessage("It's work time! Get back to focus!");
+    }
+  };
+
+  // Send WhatsApp message using Twilio API
+  const sendMessage = async (message) => {
+    const toNumber = "+917892466923"; // Replace with dynamic or static phone number
+    
+    try {
+      const response = await fetch("/api/sendagain", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: message,
+          to: toNumber, // Pass the recipient number along with the message
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+      console.log("Message sent successfully");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+  
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -74,16 +125,19 @@ const Page2 = () => {
 
   const handleStart = () => {
     if (time === 0) {
-      setTime(25 * 60); // Reset timer
+      setTime(25 * 60); // Reset timer to work time
     }
 
     setIsPlaying((prevIsPlaying) => !prevIsPlaying); // Toggle play state
   };
 
   const handleReset = () => {
-    setTime(25 * 60); // Reset timer
+    setTime(25 * 60); // Reset timer to work time
     setCurrentTrackIndex(0); // Reset to the first track
     setIsPlaying(false);
+    setIsWorkTime(true); // Reset to work session
+    setSessionType("Work"); // Reset session type text
+
     if (audio) {
       audio.pause(); // Stop music
       audio.currentTime = 0; // Reset audio position
@@ -98,6 +152,7 @@ const Page2 = () => {
           <div className="bg-[#f7f4e5] h-[150px] w-[325px] rounded-[10px] mb-[20px] border-[10px] border-black flex items-center justify-center">
             <div className={teko1.className}>
               <div className="text-[140px] pt-[20px]">{formatTime(time)}</div>
+        
             </div>
           </div>
           <div className="flex w-full gap-[130px] items-center justify-center">
@@ -133,6 +188,7 @@ const Page2 = () => {
           </div>
         </div>
         <div className="bg-[#353738] px-[150px] py-[8px] rounded-b-[10px] border-[10px] border-black border-t-0"></div>
+        <div className="text-xl pt-[10px]">{sessionType}</div> {/* Display Work/Break next to clock */}
       </div>
     </div>
   );
