@@ -2,51 +2,51 @@ const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-require('dotenv').config();  // Ensure .env is loaded
+require('dotenv').config();
 
 const app = express();
 
 // Initialize CORS and bodyParser middleware
-app.use(cors());  // Allow all domains (you can modify this to restrict to specific domains)
-app.use(bodyParser.json());  
+app.use(cors());
+app.use(bodyParser.json());
 
-// Initialize Google Generative AI client with API Key from environment variables
-const geminiApiKey = process.env.GEMINI_API_KEY;  // Load from .env file
+// Initialize Google Generative AI client
+const geminiApiKey = process.env.GEMINI_API_KEY;
 const googleAI = new GoogleGenerativeAI(geminiApiKey);
 const geminiModel = googleAI.getGenerativeModel({
-  model: "gemini-1.5-flash",  // Ensure this is the correct model
+  model: "gemini-1.5-flash", 
 });
 
 // Endpoint to handle POST request for getting day status
 app.post('/api/getDayStatus', async (req, res) => {
-  const data = req.body;  // The input data from the frontend (could be a list of nodes)
-
-  // Log the incoming request data for debugging
+  const { data, prompt } = req.body;  // Expect `prompt` to be sent in the request body
   console.log("Received request data:", data);
+  console.log("Received prompt:", prompt);
 
-  // 1. Data Preparation (converting the received data into a format expected by the Gemini API)
-  const geminiInput = data.map(item => {
+  // Prepare input for the Gemini model
+  const geminiInput = `${prompt}\n\n` + data.map(item => {
     return `Source Node: ${item.sourceNodeData.name} (${item.sourceNodeData.code})\n` +
            `Target Node: ${item.targetNodeData.name} (${item.targetNodeData.code})\n`;
-  }).join('\n\n');  // Joining the data into a single string
+  }).join('\n\n');
 
-  // 2. Call Gemini API using async/await (making the actual request)
+  console.log("Formatted Gemini input:", geminiInput);
+
   try {
-    // Use the geminiModel's generateContent method to send the input to the Gemini model
+    // Call the Gemini API
     const result = await geminiModel.generateContent(geminiInput);
-    
+
     // Log the API response for debugging
     console.log("Gemini API response:", result);
 
     // Assuming result.response contains the AI's response
-    const aiResponse = result.response.text();  // Adjust this according to the response format
+    const aiResponse = result.response.text();
 
-    
+    // Send AI response to the client
     res.json({ aiResponse });
   } catch (error) {
-   
+    // Handle errors
     console.error('Error calling Gemini API:', error);
-    res.status(500).json({ error: 'Internal server error' }); // Respond with an error message
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

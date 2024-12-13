@@ -12,13 +12,14 @@ const Dropdowntest = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-     
-        const tasks = await sanityClient.fetch('*[_type == "task"]');
+        // Fetch tasks with their descriptions
+        const tasks = await sanityClient.fetch('*[_type == "task"]{_id, title, description}');
         
-   
+        // Map tasks to include name, code, and description
         const taskOptions = tasks.map(task => ({
           code: task._id, 
           name: task.title, 
+          description: task.description || "No description available", // Default if description is missing
         }));
 
         setOptions(taskOptions); // Set the options state
@@ -30,12 +31,12 @@ const Dropdowntest = () => {
     fetchTasks();
   }, []);
 
-  const onProviderClick = ({ name, code }) => {
+  const onProviderClick = ({ name, code, description }) => {
     setNodes((prevNodes) => [
       ...prevNodes,
       {
         id: uuidv4(),
-        data: { name, code },
+        data: { name, code, description }, // Embed the description in node data
         type: "databaseoptions",
         position: { x: 0, y: 100 },
       },

@@ -59,26 +59,28 @@ const Flowable = () => {
 
   const fetchDailyReport = async () => {
     const connections = getDatabaseConnections();
-
+    const prompt = "Analyze these node connections and provide insights and say how good is my day planned";
+  
     try {
       const response = await fetch("http://localhost:5001/api/getDayStatus", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(connections), // Send the connections data to the backend
+        body: JSON.stringify({ data: connections, prompt }),
       });
-
+  
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-
+  
       const data = await response.json();
-      console.log("Daily Report Response:", data); // Log the response
+      console.log("Daily Report Response:", data);
     } catch (error) {
       console.error("Error fetching daily report:", error);
     }
   };
+  
 
   return (
     <div style={{ width: "100%", height: "80vh", paddingTop: "0px" }}>
