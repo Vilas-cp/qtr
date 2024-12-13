@@ -1,19 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useReactFlow } from "reactflow";
 import { v4 as uuidv4 } from "uuid";
-
-const options = [
-  { code: "Do Homework", name: "Do Homework" },
-  { code: "Go to gym", name: "Go to gym" },
-  {code:"Do Dinner",name:"Do dinner"}
-];
+import { sanityClient } from "../../../sanity"; 
 
 const Dropdowntest = () => {
   const { setNodes } = useReactFlow();
-  const [isOpen, setIsOpen] = useState(false); 
+  const [isOpen, setIsOpen] = useState(false);
+  const [options, setOptions] = useState([]); 
+
+  // Fetch tasks from Sanity
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+     
+        const tasks = await sanityClient.fetch('*[_type == "task"]');
+        
+   
+        const taskOptions = tasks.map(task => ({
+          code: task._id, 
+          name: task.title, 
+        }));
+
+        setOptions(taskOptions); // Set the options state
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
 
   const onProviderClick = ({ name, code }) => {
-  
     setNodes((prevNodes) => [
       ...prevNodes,
       {
@@ -23,7 +40,7 @@ const Dropdowntest = () => {
         position: { x: 0, y: 100 },
       },
     ]);
-    setIsOpen(false); 
+    setIsOpen(false);
   };
 
   return (

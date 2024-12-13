@@ -57,6 +57,29 @@ const Flowable = () => {
     return databaseConnections;
   };
 
+  const fetchDailyReport = async () => {
+    const connections = getDatabaseConnections();
+
+    try {
+      const response = await fetch("http://localhost:5001/api/getDayStatus", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(connections), // Send the connections data to the backend
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Daily Report Response:", data); // Log the response
+    } catch (error) {
+      console.error("Error fetching daily report:", error);
+    }
+  };
+
   return (
     <div style={{ width: "100%", height: "80vh", paddingTop: "0px" }}>
       <ReactFlowProvider>
@@ -79,10 +102,7 @@ const Flowable = () => {
           <Controls />
         </ReactFlow>
         <button
-          onClick={() => {
-            const connections = getDatabaseConnections();
-            console.log(connections);
-          }}
+          onClick={fetchDailyReport} // Call the fetchDailyReport function
           style={{
             position: "absolute",
             bottom: 20,
@@ -94,7 +114,7 @@ const Flowable = () => {
             border: "none",
           }}
         >
-          Get Daily plan
+          Get Daily Report
         </button>
       </ReactFlowProvider>
     </div>

@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { sanityClient } from "../../../sanity";
 import { useRouter } from "next/navigation";
 
+
+
+
 const TaskForm = () => {
   const router = useRouter();
   const [tasks, setTasks] = useState([]);
@@ -94,7 +97,7 @@ const TaskForm = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative ">
       {/* Button to toggle form visibility */}
       <button
         onClick={() => setShowForm((prev) => !prev)}
@@ -242,21 +245,36 @@ const TaskForm = () => {
 
       {/* Displaying task data */}
       <div className="mt-8 ml-[250px]">
-        <h2 className="text-lg font-semibold">Task List</h2>
-        <ul className="space-y-2">
+        <h2 className="text-[50px] font-bold pb-5">
+           Task List
+            </h2>
+        <ul className="space-y-2 w-[500px] pb-[100px]">
           {tasks.map((task) => (
             <li
               key={task._id}
-              className="p-4 border-b border-gray-200"
-              onClick={() => router.push(`/clock2/${task._id}`)} // Wrap in a function
+              className="p-4 border border-gray-200 flex items-center  space-x-4 cursor-pointer"
+              onClick={() => router.push(`/clock2/${task._id}`)}
             >
-              <h3 className="text-xl font-bold">{task.title}</h3>
-              <p>{task.description}</p>
-              <p>Status: {task.status}</p>
-              <p>
-                Pomodoro: {task.pomodoroSettings.workDuration} min work,{" "}
-                {task.pomodoroSettings.breakDuration} min break
-              </p>
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">{task.title}</h3>
+                <p className="text-gray-400 font-medium">{task.description}</p>
+              </div>
             </li>
           ))}
         </ul>
