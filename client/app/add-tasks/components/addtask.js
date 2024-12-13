@@ -1,9 +1,27 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { sanityClient } from "../../../sanity";
+import { useRouter } from "next/navigation";
 
 const TaskForm = () => {
+  const router = useRouter();
   const [tasks, setTasks] = useState([]);
   const [showForm, setShowForm] = useState(false);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      if (!sanityClient) {
+        console.error("sanityClient is not initialized");
+        return;
+      }
+
+      const query = '*[_type == "task"]';
+      const sanityTasks = await sanityClient.fetch(query);
+      setTasks(sanityTasks);
+    };
+
+    fetchTasks();
+  }, []);
 
   // State for form inputs
   const [task, setTask] = useState({
@@ -38,20 +56,41 @@ const TaskForm = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setTasks([...tasks, task]); // Add new task to the array
-    setTask({
-      title: "",
-      description: "",
-      status: "in-progress",
-      pomodoroSettings: {
-        workDuration: 25,
-        breakDuration: 5,
-        longBreakDuration: 15,
-      },
-    }); // Reset form
-    setShowForm(false); // Hide the form after submission
+
+    try {
+      // Push task to Sanity
+      const newTask = await sanityClient.create({
+        _type: "task",
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        pomodoroSettings: {
+          workDuration: task.pomodoroSettings.workDuration,
+          breakDuration: task.pomodoroSettings.breakDuration,
+          longBreakDuration: task.pomodoroSettings.longBreakDuration,
+        },
+      });
+
+      // Update tasks in state
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+
+      // Reset form
+      setTask({
+        title: "",
+        description: "",
+        status: "in-progress",
+        pomodoroSettings: {
+          workDuration: 25,
+          breakDuration: 5,
+          longBreakDuration: 15,
+        },
+      });
+      setShowForm(false);
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
 
   return (
@@ -205,8 +244,12 @@ const TaskForm = () => {
       <div className="mt-8 ml-[250px]">
         <h2 className="text-lg font-semibold">Task List</h2>
         <ul className="space-y-2">
-          {tasks.map((task, index) => (
-            <li key={index} className="p-4 border-b border-gray-200">
+          {tasks.map((task) => (
+            <li
+              key={task._id}
+              className="p-4 border-b border-gray-200"
+              onClick={() => router.push(`/clock2/${task._id}`)} // Wrap in a function
+            >
               <h3 className="text-xl font-bold">{task.title}</h3>
               <p>{task.description}</p>
               <p>Status: {task.status}</p>

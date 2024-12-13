@@ -1,6 +1,6 @@
 import React from 'react'
 import Flowable from './components/flowable'
-import Sidebar from '../clock1/components/Navbar'
+import Sidebar from '../clock2/[id]/components/Navbar'
 
 const Page = () => {
   return (

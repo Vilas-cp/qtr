@@ -1,0 +1,16 @@
+{
+    "pomodoroSettings": {
+        "longBreakDuration": 20,
+        "breakDuration": 10,
+        "cycles": 2,
+        "workDuration": 30
+    },
+    "_rev": "cbggzhHiVnGg7FnlV9yQXL",
+    "description": "hi this karen testing task",
+    "_updatedAt": "2024-12-13T14:46:33Z",
+    "status": "pending",
+    "_createdAt": "2024-12-13T14:45:36Z",
+    "_type": "task",
+    "_id": "c3dbf821-63ce-4649-96bf-8bec9db11f6b",
+    "title": "karen"
+}
