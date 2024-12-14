@@ -30,6 +30,12 @@ export default {
       validation: (Rule) => Rule.required(),
     },
     {
+      name: 'dueDate',
+      type: 'datetime',
+      title: 'Due Date',
+      description: 'Optional: Deadline for the task.',
+    },
+    {
       name: 'pomodoroSettings',
       type: 'object',
       title: 'Pomodoro Settings',

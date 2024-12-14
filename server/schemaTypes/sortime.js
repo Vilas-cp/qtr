@@ -29,7 +29,7 @@ export default {
       name: 'dueDate',
       type: 'datetime',
       title: 'Due Date',
-      description: 'Deadline for the task',
+      description: 'Optional: Deadline for the task.',
     },
     {
       name: 'priority',
