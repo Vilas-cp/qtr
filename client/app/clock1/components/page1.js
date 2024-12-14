@@ -16,29 +16,28 @@ const Page2 = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [audio, setAudio] = useState(null);
-  const [time, setTime] = useState(25 * 60); // Start with 25 minutes for work
-  const [isWorkTime, setIsWorkTime] = useState(true); // True means work, false means break
-  const [sessionType, setSessionType] = useState("Work"); // Session type text: Work / Break
+  const [time, setTime] = useState(0.1 * 60); // Start with 25 minutes for work
+  const [isWorkTime, setIsWorkTime] = useState(true); 
+  const [sessionType, setSessionType] = useState("Work"); 
 
-  // Initialize or update audio when track index changes
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const audioInstance = new Audio(musicTracks[currentTrackIndex]);
       audioInstance.loop = false;
 
-      // Move to the next track when the current one ends
       audioInstance.onended = () => {
         if (currentTrackIndex < musicTracks.length - 1) {
           setCurrentTrackIndex((prevIndex) => prevIndex + 1);
         } else {
-          setCurrentTrackIndex(0); // Loop back to the first track
+          setCurrentTrackIndex(0); 
         }
       };
 
       setAudio((prevAudio) => {
         if (prevAudio) {
           prevAudio.pause();
-          prevAudio.src = ""; // Clean up the old audio instance
+          prevAudio.src = "";
         }
         return audioInstance;
       });
@@ -68,30 +67,30 @@ const Page2 = () => {
     }
   }, [isPlaying, time]);
 
-  // Handle switching between work and break sessions
+ 
   const handleSessionChange = () => {
     if (isWorkTime) {
-      // Break time: 5 minutes
-      setTime(5 * 60); // Set time for break
+     
+      setTime(5 * 60); 
       setIsWorkTime(false);
       setSessionType("Break");
 
-      // Send WhatsApp message using Twilio for break
+     
       sendMessage("It's break time! Take a rest!");
     } else {
-      // Work time: 25 minutes
-      setTime(25 * 60); // Set time for work
+     
+      setTime(25 * 60);
       setIsWorkTime(true);
       setSessionType("Work");
 
-      // Send WhatsApp message using Twilio for work
+    
       sendMessage("It's work time! Get back to focus!");
     }
   };
 
-  // Send WhatsApp message using Twilio API
+  
   const sendMessage = async (message) => {
-    const toNumber = "+917892466923"; // Replace with dynamic or static phone number
+    const toNumber = "+917892466923"; 
     
     try {
       const response = await fetch("/api/sendagain", {
@@ -101,7 +100,7 @@ const Page2 = () => {
         },
         body: JSON.stringify({
           message: message,
-          to: toNumber, // Pass the recipient number along with the message
+          to: toNumber, 
         }),
       });
   

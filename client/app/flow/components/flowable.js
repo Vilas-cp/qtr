@@ -13,6 +13,7 @@ import Dropdowntest from "./dropdowntest";
 import { initialEdges, initialNodes } from "./Workflow.constant";
 import { v4 as uuidv4 } from "uuid";
 import Databaseoptions from "./databaseoptions";
+import { jsPDF } from "jspdf";
 
 const nodeTypes = {
   dropdowntest: Dropdowntest,
@@ -28,12 +29,31 @@ const Flowable = () => {
 
   useEffect(() => {
     if (report) {
-     
-      console.log("Full Report Data:", report); 
-      console.log(typeof report); 
+      console.log("Full Report Data:", report);
+      console.log(typeof report);
       console.log("Good Day Meter:", report?.insights?.goodDayMeter);
     }
   }, [report]);
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+
+   
+    const dialogContent = document.getElementById("dialog-content");
+
+    doc.html(dialogContent, {
+      callback: function (doc) {
+        doc.save("daily_report.pdf");
+      },
+      scale: 0.8, 
+      margin: [10, 10, 10, 10],
+      x: 10,
+      y: 10,
+      width: 200,
+      windowWidth: 900,
+      autoPaging: true,
+    });
+    
+  };
 
   const onConnect = useCallback((connection) => {
     const edge = {
@@ -81,13 +101,17 @@ const Flowable = () => {
             "relatedActivities": [
               "",
               ""
-            ]
+            ],
+             "probableRequiredTime": "",
+             "NumberofPomodoroCycles": "",
           }
         ],
         "suggestions": [
           "", "", "", ""
         ],
-        "goodDayMeter": 0
+        "goodDayMeter": 0,
+        "stressLevel": 0,
+         "learningProgress": 0 ,
       }
     } give me in this format Do not wrap the json codes in JSON markers`;
 
@@ -116,15 +140,15 @@ const Flowable = () => {
         parsedData = parsedData.aiResponse;
       }
 
-      console.log("Parsed Data:", ); 
+      console.log("Parsed Data:");
 
-      setReport(JSON.parse(parsedData)); 
+      setReport(JSON.parse(parsedData));
       setDialogOpen(true);
     } catch (error) {
       console.error("Error fetching daily report:", error);
       alert("Failed to fetch the report. Please try again.");
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -174,11 +198,12 @@ const Flowable = () => {
 
       {/* Dialog */}
       <div
+        id="dialog-content"
         style={{
           position: "fixed",
           top: 0,
-          right: dialogOpen ? 0 : "-400px",
-          width: "600px",
+          right: dialogOpen ? 0 : "-800px",
+          width: "800px",
           height: "100%",
           backgroundColor: "#f5f5f5",
           boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
@@ -188,61 +213,171 @@ const Flowable = () => {
           overflowY: "auto",
         }}
       >
-        <h2 className="font-medium" style={{ marginBottom: "20px", color: "#333" }}>
-          Daily Report
-        </h2>
-        {/* Render Day Explained */}
-        <h3>Day Explained</h3>
-        {report?.insights?.dayExplained?.length > 0 ? (
-          report.insights.dayExplained.map((activity, index) => (
-            <div key={index}>
-              <h4>{activity.activity}</h4>
-              <p>{activity.description}</p>
-              <strong>Related Activities:</strong>
-              <ul>
-                {activity.relatedActivities?.length > 0 ? (
-                  activity.relatedActivities.map((related, idx) => (
-                    <li key={idx}>{related}</li>
-                  ))
-                ) : (
-                  <li>No related activities available.</li>
-                )}
+        <div className="p-6">
+          <h2 className="font-medium text-2xl mb-6 text-gray-800">
+            Daily Report
+          </h2>
+
+          {/* Day Explained Section */}
+          <div className="space-y-8">
+            <h3 className="text-xl font-semibold text-gray-700">
+              Day Explained
+            </h3>
+            {report?.insights?.dayExplained?.length > 0 ? (
+              report.insights.dayExplained.map((activity, index) => (
+                <div key={index} className="p-4 bg-white rounded-lg shadow-sm">
+                  <h4 className="text-lg font-bold text-gray-800">
+                    {activity.activity}
+                  </h4>
+                  <p className="text-gray-600">{activity.description}</p>
+                  <p className="mt-2">
+                    <strong>Probable Required Time:</strong>{" "}
+                    {activity.probableRequiredTime}
+                  </p>
+                  <p className="mt-2">
+                    <strong>Number of Pomodoro Cycles:</strong>{" "}
+                    {activity.NumberofPomodoroCycles}
+                  </p>
+
+                  <strong className="mt-2 block text-gray-800">
+                    Related Activities:
+                  </strong>
+                  <ul className="list-disc pl-5 mt-2 flex gap-4">
+                    {activity.relatedActivities?.length > 0 ? (
+                      activity.relatedActivities.map((related, idx) => (
+                        <div
+                          key={idx}
+                          className="text-white bg-black w-[150px] p-2 text-center rounded font-semibold text-sm"
+                        >
+                          {related}
+                        </div>
+                      ))
+                    ) : (
+                      <li className="text-gray-500">
+                        No related activities available.
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500">
+                No activities explained for the day.
+              </p>
+            )}
+          </div>
+
+          {/* Suggestions Section */}
+          <div className="mt-8 p-4 bg-white rounded-lg shadow-sm">
+            <h3 className="text-xl font-semibold text-gray-700">Suggestions</h3>
+            {report?.insights?.suggestions?.length > 0 ? (
+              <ul className="list-disc pl-5 mt-2 text-gray-600">
+                {report.insights.suggestions.map((suggestion, index) => (
+                  <li key={index}>{suggestion}</li>
+                ))}
               </ul>
+            ) : (
+              <p className="text-gray-500">No suggestions available.</p>
+            )}
+          </div>
+
+          {/* Good Day Meter Section */}
+          <div className="mt-8 p-4 bg-white rounded-lg shadow-sm">
+            <h3 className="text-xl font-semibold text-gray-700">
+              Good Day Meter
+            </h3>
+            <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
+              <div
+                className={`h-full rounded-full ${
+                  report?.insights?.goodDayMeter ?? 0 >= 75
+                    ? "bg-green-500"
+                    : report?.insights?.goodDayMeter ?? 0 >= 50
+                    ? "bg-yellow-500"
+                    : "bg-red-500"
+                }`}
+                style={{ width: `${report?.insights?.goodDayMeter ?? 0}%` }}
+              ></div>
             </div>
-          ))
-        ) : (
-          <p>No activities explained for the day.</p>
-        )}
+            <p className="mt-2 text-gray-600">
+              {report?.insights?.goodDayMeter ?? 0}%
+            </p>
+          </div>
 
-        {/* Render Suggestions */}
-        <h3>Suggestions</h3>
-        {report?.insights?.suggestions?.length > 0 ? (
-          <ul>
-            {report.insights.suggestions.map((suggestion, index) => (
-              <li key={index}>{suggestion}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No suggestions available.</p>
-        )}
+          {/* Stress Level Section */}
+          <div className="mt-8 p-4 bg-white rounded-lg shadow-sm">
+            <h3 className="text-xl font-semibold text-gray-700">
+              Stress Level
+            </h3>
+            <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
+              <div
+                className={`h-full rounded-full ${
+                  report?.insights?.stressLevel ?? 0 >= 75
+                    ? "bg-red-500"
+                    : report?.insights?.stressLevel ?? 0 >= 50
+                    ? "bg-yellow-500"
+                    : "bg-green-500"
+                }`}
+                style={{ width: `${report?.insights?.stressLevel ?? 0}%` }}
+              ></div>
+            </div>
+            <p className="mt-2 text-gray-600">
+              {report?.insights?.stressLevel ?? 0}%
+            </p>
+          </div>
 
-        {/* Render Good Day Meter */}
-        <h3>Good Day Meter: {report?.insights?.goodDayMeter ?? 0}%</h3>
+          {/* Learning Progress Section */}
+          <div className="mt-8 p-4 bg-white rounded-lg shadow-sm">
+            <h3 className="text-xl font-semibold text-gray-700">
+              Learning Progress
+            </h3>
+            <div className="w-full bg-gray-200 rounded-full h-4 mt-2">
+              <div
+                className={`h-full rounded-full ${
+                  report?.insights?.learningProgress ?? 0 >= 75
+                    ? "bg-blue-500"
+                    : report?.insights?.learningProgress ?? 0 >= 50
+                    ? "bg-yellow-500"
+                    : "bg-red-500"
+                }`}
+                style={{ width: `${report?.insights?.learningProgress ?? 0}%` }}
+              ></div>
+            </div>
+            <p className="mt-2 text-gray-600">
+              {report?.insights?.learningProgress ?? 0}%
+            </p>
+            <button
+            onClick={handleDownloadPDF}
+            style={{
+              position: "absolute",
+              top: 60,
+              right: 20,
+              padding: "10px 20px",
+              background: "#5e5eff",
+              color: "#fff",
+              borderRadius: "4px",
+              border: "none",
+            }}
+          >
+            Download PDF
+          </button>
+          </div>
+        
+        </div>
 
         {/* Close Button */}
         <button
           onClick={() => {
             setDialogOpen(false);
-            setReport(null); // Clear the report when closing the dialog
+            setReport(null); 
           }}
           style={{
             position: "absolute",
             top: "10px",
-            right: "10px",
+            right: "30px",
             background: "transparent",
             border: "none",
             color: "#888",
-            fontSize: "20px",
+            fontSize: "30px",
             cursor: "pointer",
           }}
         >

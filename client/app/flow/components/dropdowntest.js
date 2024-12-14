@@ -8,21 +8,20 @@ const Dropdowntest = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState([]); 
 
-  // Fetch tasks from Sanity
+ 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        // Fetch tasks with their descriptions
+       
         const tasks = await sanityClient.fetch('*[_type == "task"]{_id, title, description}');
-        
-        // Map tasks to include name, code, and description
+       
         const taskOptions = tasks.map(task => ({
           code: task._id, 
           name: task.title, 
-          description: task.description || "No description available", // Default if description is missing
+          description: task.description || "No description available", 
         }));
 
-        setOptions(taskOptions); // Set the options state
+        setOptions(taskOptions); 
       } catch (error) {
         console.error("Error fetching tasks:", error);
       }
@@ -36,9 +35,9 @@ const Dropdowntest = () => {
       ...prevNodes,
       {
         id: uuidv4(),
-        data: { name, code, description }, // Embed the description in node data
+        data: { name, code, description }, 
         type: "databaseoptions",
-        position: { x: 0, y: 100 },
+        position: { x: 0, y: -100 },
       },
     ]);
     setIsOpen(false);

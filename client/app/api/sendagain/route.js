@@ -23,11 +23,13 @@ export async function POST(request) {
       from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`, // Your Twilio WhatsApp number
       to: `whatsapp:${to}`, // Dynamic recipient phone number
     });
-
+    console.log('hi');
+    
     // Return success response
     return new Response(
       JSON.stringify({ success: true, data: response }),
       { status: 200 }
+   
     );
   } catch (error) {
     console.error('Error sending message:', error);
