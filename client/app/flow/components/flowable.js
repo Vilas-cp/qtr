@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import ReactFlow, {
   ReactFlowProvider,
   Background,
@@ -22,8 +22,18 @@ const nodeTypes = {
 const Flowable = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [dialogOpen, setDialogOpen] = useState(false); // State to control dialog visibility
-  const [report, setReport] = useState(""); // State to store AI response
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [report, setReport] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (report) {
+     
+      console.log("Full Report Data:", report); 
+      console.log(typeof report); 
+      console.log("Good Day Meter:", report?.insights?.goodDayMeter);
+    }
+  }, [report]);
 
   const onConnect = useCallback((connection) => {
     const edge = {
@@ -37,7 +47,9 @@ const Flowable = () => {
   const handleInputChange = (id, value) => {
     setNodes((prevNodes) =>
       prevNodes.map((node) =>
-        node.id === id ? { ...node, data: { ...node.data, inputValue: value } } : node
+        node.id === id
+          ? { ...node, data: { ...node.data, inputValue: value } }
+          : node
       )
     );
   };
@@ -46,7 +58,7 @@ const Flowable = () => {
     const databaseConnections = edges
       .filter((edge) => {
         const targetNode = nodes.find((node) => node.id === edge.target);
-        return targetNode?.type === "databaseoptions"; // Filter for "databaseoptions" node type
+        return targetNode?.type === "databaseoptions";
       })
       .map((edge) => ({
         targetNodeId: edge.target,
@@ -55,14 +67,32 @@ const Flowable = () => {
         sourceNodeData: nodes.find((node) => node.id === edge.source)?.data,
       }));
 
-    console.log(JSON.stringify(databaseConnections, null, 2));
     return databaseConnections;
   };
 
   const fetchDailyReport = async () => {
     const connections = getDatabaseConnections();
-    const prompt = "Analyze these node connections and provide insights and say how good is my day planned";
-  
+    const prompt = `Generate a daily workflow analysis {
+      "insights": {
+        "dayExplained": [
+          {
+            "activity": "",
+            "description": "",
+            "relatedActivities": [
+              "",
+              ""
+            ]
+          }
+        ],
+        "suggestions": [
+          "", "", "", ""
+        ],
+        "goodDayMeter": 0
+      }
+    } give me in this format Do not wrap the json codes in JSON markers`;
+
+    setLoading(true); // Set loading to true when starting the fetch
+
     try {
       const response = await fetch("http://localhost:5001/api/getDayStatus", {
         method: "POST",
@@ -71,18 +101,37 @@ const Flowable = () => {
         },
         body: JSON.stringify({ data: connections, prompt }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-  
-      const data = await response.json();
-      console.log("Daily Report Response:", data);
-      setReport(data.aiResponse || "No response available"); // Update the report state
-      setDialogOpen(true); // Open the dialog
+
+      const data = await response.text();
+      console.log("Raw AI Response:", data);
+
+      let cleanedData = cleanJsonString(data);
+      let parsedData = JSON.parse(cleanedData);
+
+      if (parsedData.aiResponse) {
+        parsedData = parsedData.aiResponse;
+      }
+
+      console.log("Parsed Data:", ); 
+
+      setReport(JSON.parse(parsedData)); 
+      setDialogOpen(true);
     } catch (error) {
       console.error("Error fetching daily report:", error);
+      alert("Failed to fetch the report. Please try again.");
+    } finally {
+      setLoading(false); 
     }
+  };
+
+  const cleanJsonString = (jsonString) => {
+    const pattern = /^```json\s*(.*?)\s*```$/s;
+    const cleanedString = jsonString.replace(pattern, "$1");
+    return cleanedString.trim();
   };
 
   return (
@@ -119,7 +168,7 @@ const Flowable = () => {
             border: "none",
           }}
         >
-          Get Daily Report
+          {loading ? "Loading..." : "Get Daily Report"}
         </button>
       </ReactFlowProvider>
 
@@ -128,21 +177,64 @@ const Flowable = () => {
         style={{
           position: "fixed",
           top: 0,
-          right: dialogOpen ? 0 : "-400px", // Slide in/out
+          right: dialogOpen ? 0 : "-400px",
           width: "600px",
           height: "100%",
           backgroundColor: "#f5f5f5",
           boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
-          transition: "right 0.3s ease-in-out", // Smooth transition
+          transition: "right 0.3s ease-in-out",
           zIndex: 1000,
           padding: "20px",
           overflowY: "auto",
         }}
       >
-        <h2 style={{ marginBottom: "20px", color: "#333" }} className="font-medium">Daily Report</h2>
-        <p style={{ color: "#555" }}>{report}</p>
+        <h2 className="font-medium" style={{ marginBottom: "20px", color: "#333" }}>
+          Daily Report
+        </h2>
+        {/* Render Day Explained */}
+        <h3>Day Explained</h3>
+        {report?.insights?.dayExplained?.length > 0 ? (
+          report.insights.dayExplained.map((activity, index) => (
+            <div key={index}>
+              <h4>{activity.activity}</h4>
+              <p>{activity.description}</p>
+              <strong>Related Activities:</strong>
+              <ul>
+                {activity.relatedActivities?.length > 0 ? (
+                  activity.relatedActivities.map((related, idx) => (
+                    <li key={idx}>{related}</li>
+                  ))
+                ) : (
+                  <li>No related activities available.</li>
+                )}
+              </ul>
+            </div>
+          ))
+        ) : (
+          <p>No activities explained for the day.</p>
+        )}
+
+        {/* Render Suggestions */}
+        <h3>Suggestions</h3>
+        {report?.insights?.suggestions?.length > 0 ? (
+          <ul>
+            {report.insights.suggestions.map((suggestion, index) => (
+              <li key={index}>{suggestion}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No suggestions available.</p>
+        )}
+
+        {/* Render Good Day Meter */}
+        <h3>Good Day Meter: {report?.insights?.goodDayMeter ?? 0}%</h3>
+
+        {/* Close Button */}
         <button
-        onClick={() => (setDialogOpen(false), setReport(""))}// Close the dialog
+          onClick={() => {
+            setDialogOpen(false);
+            setReport(null); // Clear the report when closing the dialog
+          }}
           style={{
             position: "absolute",
             top: "10px",
