@@ -1,10 +1,9 @@
 import React from "react";
 import { useUser } from "@clerk/nextjs";
 
-function Pending({ tasks }) {
+function Pending({ tasks, toggleTaskStatus }) {
   const { isSignedIn, user } = useUser();
 
-  
   if (!isSignedIn) {
     return <p>Please sign in to view your tasks.</p>;
   }
@@ -27,9 +26,10 @@ function Pending({ tasks }) {
               <p className="text-sm mt-2">
                 <span className="font-semibold">Status:</span>
                 <span
-                  className={`px-3 ml-2 py-1 text-white rounded-sm ${
+                  className={`px-3 ml-2 py-1 text-white rounded-sm cursor-pointer ${
                     task.status === "pending" ? "bg-[#ff2732]" : "bg-green-500"
                   }`}
+                  onClick={() => console.log(task._id)} 
                 >
                   {task.status}
                 </span>
@@ -48,6 +48,19 @@ function Pending({ tasks }) {
                   {new Date(task.dueDate).toLocaleDateString()}
                 </p>
               )}
+              <p className="pt-[10px]">
+                <span
+                  className={`px-3 py-1 text-white rounded-sm ${
+                    task.priority === "high"
+                      ? "bg-[#ff2732]"
+                      : task.priority === "medium"
+                      ? "bg-[#ffc107]"
+                      : "bg-[#28a745]"
+                  }`}
+                >
+                  {task.priority}
+                </span>
+              </p>
             </li>
           ))}
       </ul>

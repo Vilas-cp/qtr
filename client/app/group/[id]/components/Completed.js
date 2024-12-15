@@ -3,8 +3,8 @@ import { useUser } from "@clerk/nextjs";
 
 function Completed({ tasks }) {
   const { isSignedIn, user } = useUser();
+console.log(tasks);
 
-  
   if (!isSignedIn) {
     return <p>Please sign in to view your tasks.</p>;
   }
@@ -34,6 +34,7 @@ function Completed({ tasks }) {
                   {task.status}
                 </span>
               </p>
+             
               {task.assignedTo && (
                 <p className="text-sm mt-2">
                   <span className="font-semibold">Assigned To:</span>{" "}
@@ -48,6 +49,20 @@ function Completed({ tasks }) {
                   {new Date(task.dueDate).toLocaleDateString()}
                 </p>
               )}
+               <p className="pt-[10px]">
+                <span
+                  className={`px-3 py-1 text-white rounded-sm ${
+                    task.priority === "high"
+                      ? "bg-[#ff2732]" // Red for high priority
+                      : task.priority === "medium"
+                      ? "bg-[#ffc107]" // Yellow for medium priority
+                      : "bg-[#28a745]" // Green for low priority
+                  }`}
+                >
+                  {task.priority}
+                </span>
+              </p>
+
             </li>
           ))}
       </ul>

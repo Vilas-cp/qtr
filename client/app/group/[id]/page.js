@@ -14,7 +14,6 @@ const UserDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the project data based on the project ID
     const fetchProject = async () => {
       console.log("Fetching project with ID:", projectId);
 
@@ -24,18 +23,19 @@ const UserDetails = () => {
             projectName,
             projectDescription,
             tasks[] {
+              _id,
               taskTitle,
               taskDescription,
               status,
+              priority,
               dueDate,
               assignedTo-> { name, email }
             }
           }
         `;
-        const data = await sanityClient.fetch(query, { projectId });
+        const data = await sanityClient.fetch(query);
         console.log("Project data:", JSON.stringify(data, null, 2));
 
-        // Ensure we handle array response properly
         setProject(data.length > 0 ? data[0] : null);
       } catch (error) {
         console.error("Error fetching project:", error);
@@ -47,7 +47,24 @@ const UserDetails = () => {
     fetchProject();
   }, [projectId]);
 
-  // Use a loading placeholder for consistent SSR
+  const toggleTaskStatus = async (taskId, currentStatus) => {
+    try {
+      const newStatus = currentStatus === "pending" ? "completed" : "pending"; // Toggle between 'pending' and 'completed'
+  
+      // Ensure you are passing the correct document ID of the task
+      await sanityClient
+        .patch(taskId) // Ensure task._id is passed here
+        .set({ status: newStatus }) // Set the new status
+        .commit();
+  
+      console.log(`Task ${taskId} status updated to ${newStatus}`);
+    } catch (error) {
+      console.error("Error updating task status:", error);
+    }
+  };
+  
+  
+
   if (loading || !project) {
     return (
       <div className="ml-[110px]">
@@ -56,7 +73,6 @@ const UserDetails = () => {
     );
   }
 
-  // Filter tasks based on status
   const pendingTasks = project.tasks?.filter((task) => task.status === "pending") || [];
   const completedTasks = project.tasks?.filter((task) => task.status === "completed") || [];
 
@@ -72,13 +88,12 @@ const UserDetails = () => {
               <li key={index} className="border p-4 rounded-md">
                 <h3 className="font-medium text-lg">{task.taskTitle}</h3>
                 <p className="text-gray-500 mt-2">{task.taskDescription}</p>
-                <p className="text-sm mt-2">
+                <p className="text-gray-500 mt-2">{task.priority}</p>
+                <p className="text-sm mt-2 cursor-pointer" onClick={() => toggleTaskStatus(task._id, task.status)}>
                   <span className="font-semibold">Status:</span>
                   <span
                     className={`px-3 ml-2 py-1 text-white rounded-sm ${
-                      task.status === "pending"
-                        ? "bg-[#ff2732]"
-                        : "bg-green-500"
+                      task.status === "pending" ? "bg-[#ff2732]" : "bg-green-500"
                     }`}
                   >
                     {task.status}
@@ -103,10 +118,10 @@ const UserDetails = () => {
           </ul>
         </div>
         <div className="flex-1">
-          <Pending tasks={pendingTasks} />
+          <Pending tasks={pendingTasks} toggleTaskStatus={toggleTaskStatus} />
         </div>
         <div className="flex-1">
-          <Completed tasks={completedTasks} />
+          <Completed tasks={completedTasks} toggleTaskStatus={toggleTaskStatus} />
         </div>
       </div>
     </div>
