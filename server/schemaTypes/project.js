@@ -25,10 +25,10 @@ export default {
       of: [
         {
           type: 'reference',
-          to: [{ type: 'user' }], // Referring to "user" schema
+          to: [{ type: 'user' }],
         },
       ],
-      validation: (Rule) => Rule.min(1), // Ensure at least one member is added
+      validation: (Rule) => Rule.min(1),
     },
     {
       name: 'tasks',
@@ -47,6 +47,14 @@ export default {
               description: 'The name of the task.',
               validation: (Rule) => Rule.required(),
             },
+            {
+              name: 'taskId',
+              type: 'string',
+              title: 'Task ID',
+              initialValue: () => `task_${Math.random().toString(36).substr(2, 9)}`, // Auto-generate taskId
+              readOnly: true,
+            },
+           
             {
               name: 'taskDescription',
               type: 'text',
@@ -84,7 +92,7 @@ export default {
               type: 'reference',
               title: 'Assigned To',
               description: 'Assign this task to a project member',
-              to: [{ type: 'user' }], // Referring to "user" schema
+              to: [{ type: 'user' }],
               options: {
                 filter: ({ document }) => {
                   return {
@@ -123,3 +131,4 @@ export default {
     },
   ],
 };
+
