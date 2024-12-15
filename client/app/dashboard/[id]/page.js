@@ -4,6 +4,11 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { sanityClient } from "../../../sanity"; 
 import { useRouter } from "next/navigation";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, CategoryScale, Tooltip, Legend } from "chart.js";
+
+// Register Chart.js components
+ChartJS.register(ArcElement, CategoryScale, Tooltip, Legend);
 
 const Page = () => {
   const router = useRouter();
@@ -15,7 +20,8 @@ const Page = () => {
     pendingTasks: 0,
     completedTasks: 0,
   });
-  
+  const [overdueTasks, setOverdueTasks] = useState(0); // For overdue tasks
+  const [onTimeTasks, setOnTimeTasks] = useState(0); // For tasks on time
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -25,7 +31,8 @@ const Page = () => {
             projectName,
             projectDescription,
             tasks[]{
-              status
+              status,
+              dueDate
             }
           }`
         );
@@ -38,6 +45,21 @@ const Page = () => {
           const completedTasks = projectData.tasks?.filter((task) => task.status === "completed").length || 0;
 
           setTaskStats({ totalTasks, pendingTasks, completedTasks });
+
+          // Handle overdue and on-time tasks
+          const currentDate = new Date();
+          const overdue = projectData.tasks?.filter((task) => {
+            const dueDate = new Date(task.dueDate);
+            return dueDate < currentDate && task.status !== "completed";
+          }).length;
+
+          const onTime = projectData.tasks?.filter((task) => {
+            const dueDate = new Date(task.dueDate);
+            return dueDate >= currentDate || task.status === "completed";
+          }).length;
+
+          setOverdueTasks(overdue);
+          setOnTimeTasks(onTime);
         } else {
           setError("Project not found.");
         }
@@ -57,6 +79,34 @@ const Page = () => {
   if (!project) {
     return <div className="ml-[110px]">Loading...</div>;
   }
+
+  // Pie chart data and options
+  const pieChartData = {
+    labels: ['On Time', 'Overdue'],
+    datasets: [
+      {
+        data: [onTimeTasks, overdueTasks],
+        backgroundColor: ['#28a745', '#ff2732'],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const pieChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            return `${tooltipItem.label}: ${tooltipItem.raw}`;
+          },
+        },
+      },
+    },
+  };
 
   return (
     <div className="ml-[100px] p-6 bg-gray-100 min-h-screen">
@@ -80,6 +130,14 @@ const Page = () => {
         </div>
       </div>
 
+      {/* Pie Chart Section */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4">Task Due Status</h2>
+        <div className="w-full max-w-xs mx-auto">
+          <Pie data={pieChartData} options={pieChartOptions} />
+        </div>
+      </div>
+
       <div className="mt-8">
         <button
           className="bg-[#7f8ac6] text-white px-6 py-3 rounded shadow-md hover:bg-[#6e7bb3] transition"
@@ -93,4 +151,3 @@ const Page = () => {
 };
 
 export default Page;
-

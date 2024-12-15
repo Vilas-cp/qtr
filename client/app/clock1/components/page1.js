@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Teko } from "next/font/google";
 import confetti from "canvas-confetti";
 import dynamic from "next/dynamic";
+import toast from "react-hot-toast";
 
 const LottieAnimation = dynamic(() => import("./Lottiecomp"), { ssr: false });
 const LottieWork = dynamic(() => import("./LottieWork"), { ssr: false });
@@ -77,6 +78,7 @@ const Page2 = () => {
       setIsWorkTime(false);
       setSessionType("Break");
       confetti();
+      toast.success("Time for a break!");
 
       sendMessage("It's break time! Take a rest!");
     } else {
