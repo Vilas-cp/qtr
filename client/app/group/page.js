@@ -3,7 +3,8 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { sanityClient } from "../../sanity";
-import { v4 as uuidv4 } from "uuid"; // Import sanityClient from your configured file
+import { v4 as uuidv4 } from "uuid"; 
+import MyProjects from "./components/Oldprojects";
 
 const UserInfo = () => {
   const { isSignedIn, user } = useUser();
@@ -13,15 +14,15 @@ const UserInfo = () => {
     projectName: "",
     projectDescription: "",
     dueDate: "",
-    members: [], // Store selected members here
+    members: [], 
   });
   const [showForm, setShowForm] = useState(false);
-  const [allUsers, setAllUsers] = useState([]); // To store users for selection
+  const [allUsers, setAllUsers] = useState([]); 
 
-  // Fetch projects from Sanity
+ 
   const fetchProjects = async () => {
     try {
-      // Fetch projects with reference to users
+    
       const data = await sanityClient.fetch(`
         *[_type == "project"]{
           _id, 
@@ -37,26 +38,26 @@ const UserInfo = () => {
         }
       `);
 
-      // Set the fetched projects data to state
+      
       setProjects(data);
     } catch (error) {
       console.error("Error fetching projects:", error);
     }
   };
 
-  // Fetch users for selection
+  
   const fetchUsers = async () => {
     try {
       const users = await sanityClient.fetch(
         '*[_type == "user"]{_id, name, email, role, profilePicture}'
-      ); // Fetch users from your "user" schema
+      ); 
       setAllUsers(users);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
 
-  // Fetch projects and users when the component mounts
+
   useEffect(() => {
     if (isSignedIn) {
       fetchProjects();
@@ -103,7 +104,12 @@ const UserInfo = () => {
   };
   if (!isSignedIn) {
     return (
-      <div className="ml-[110px]">Please sign in to view the projects</div>
+      <div className="ml-[110px]">
+        <div className="flex items-center justify-center h-screen">
+        
+        </div>
+     
+        </div>
     );
   }
 
@@ -121,6 +127,8 @@ const UserInfo = () => {
         {showForm ? "Close Form" : "Add New Project"}
       </button>
       {/* Display Projects */}
+      <div className="flex gap-8">
+      <div className="flex-1">
       <h3 className="text-xl font-semibold mt-8">Projects</h3>
       <ul className="space-y-4 mt-4">
         {projects.map((project) => (
@@ -143,7 +151,11 @@ const UserInfo = () => {
           </li>
         ))}
       </ul>
-
+      </div>
+      <div className="mt-8 flex-1 px-[10px]">
+        <MyProjects/>
+      </div>
+      </div>
       {/* Toggle Button for Form */}
 
       {/* Sidebar Form (Right Slide) */}
