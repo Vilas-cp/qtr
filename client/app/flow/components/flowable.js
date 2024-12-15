@@ -118,7 +118,7 @@ const Flowable = () => {
     setLoading(true); // Set loading to true when starting the fetch
 
     try {
-      const response = await fetch("http://localhost:5001/api/getDayStatus", {
+      const response = await fetch("https://qtrbackend-production.up.railway.app/api/getDayStatus", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

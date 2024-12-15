@@ -78,7 +78,7 @@ const Page = () => {
   }
 
   if (!project) {
-    return <div className="">
+    return <div className="flex items-center justify-center h-screen">
         <LottieAnimation/>
     </div>;
   }
