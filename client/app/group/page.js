@@ -111,6 +111,8 @@ const UserInfo = () => {
       </div>
     );
   }
+  
+
 
   return (
     <div className="ml-[110px]">
@@ -171,6 +173,7 @@ const UserInfo = () => {
                     .map((member) => member.name || "Unknown Member")
                     .join(", ")}
                 </p>
+               
               </li>
             ))}
           </ul>
@@ -254,74 +257,76 @@ const UserInfo = () => {
               </div>
 
               <div>
-              <label className="block text-sm font-medium">
-                Project Members
-              </label>
-              <div className="space-y-2">
-                {/* Display selected users as tags */}
-                <div className="flex flex-wrap gap-2">
-                  {newProject.members.map((memberId) => {
-                    const member = allUsers.find(
-                      (user) => user._id === memberId
-                    );
-                    return (
-                      member && (
-                        <span
-                          key={member._id}
-                          className="flex items-center bg-blue-100 text-blue-700 rounded-full px-3 py-1 text-sm"
-                        >
-                          {member.name} ({member.email})
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setNewProject((prevState) => ({
-                                ...prevState,
-                                members: prevState.members.filter(
-                                  (id) => id !== member._id
-                                ),
-                              }))
-                            }
-                            className="ml-2 text-red-600"
+                <label className="block text-sm font-medium">
+                  Project Members
+                </label>
+                <div className="space-y-2">
+                  {/* Display selected users as tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {newProject.members.map((memberId) => {
+                      const member = allUsers.find(
+                        (user) => user._id === memberId
+                      );
+                      return (
+                        member && (
+                          <span
+                            key={member._id}
+                            className="flex items-center bg-blue-100 text-blue-700 rounded-full px-3 py-1 text-sm"
                           >
-                            &times;
-                          </button>
-                        </span>
-                      )
-                    );
-                  })}
+                            {member.name} ({member.email})
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setNewProject((prevState) => ({
+                                  ...prevState,
+                                  members: prevState.members.filter(
+                                    (id) => id !== member._id
+                                  ),
+                                }))
+                              }
+                              className="ml-2 text-red-600"
+                            >
+                              &times;
+                            </button>
+                          </span>
+                        )
+                      );
+                    })}
+                  </div>
+
+                  {/* Select dropdown */}
+                  <select
+                    multiple
+                    value={newProject.members}
+                    onChange={(e) => {
+                      const selectedMembers = Array.from(
+                        e.target.selectedOptions,
+                        (option) => option.value
+                      );
+
+                      setNewProject((prevState) => {
+                        const newMembers = [
+                          ...new Set([
+                            ...prevState.members,
+                            ...selectedMembers,
+                          ]), // Merging the arrays and removing duplicates
+                        ];
+                        return {
+                          ...prevState,
+                          members: newMembers,
+                        };
+                      });
+                    }}
+                    className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    {allUsers.map((user) => (
+                      <option key={user._id} value={user._id}>
+                        {user.name} ({user.email})
+                      </option>
+                    ))}
+                  </select>
                 </div>
-
-                {/* Select dropdown */}
-                <select
-                  multiple
-                  value={newProject.members}
-                  onChange={(e) => {
-                    const selectedMembers = Array.from(
-                      e.target.selectedOptions,
-                      (option) => option.value
-                    );
-
-                    setNewProject((prevState) => {
-                      const newMembers = [
-                        ...new Set([...prevState.members, ...selectedMembers]), // Merging the arrays and removing duplicates
-                      ];
-                      return {
-                        ...prevState,
-                        members: newMembers,
-                      };
-                    });
-                  }}
-                  className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                >
-                  {allUsers.map((user) => (
-                    <option key={user._id} value={user._id}>
-                      {user.name} ({user.email})
-                    </option>
-                  ))}
-                </select>
               </div>
-            </div>
-
 
               <div className="flex justify-end mt-6">
                 <button

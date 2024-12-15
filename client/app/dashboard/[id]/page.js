@@ -6,6 +6,7 @@ import { sanityClient } from "../../../sanity";
 import { useRouter } from "next/navigation";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, CategoryScale, Tooltip, Legend } from "chart.js";
+import LottieAnimation from "@/app/components/Loading";
 
 // Register Chart.js components
 ChartJS.register(ArcElement, CategoryScale, Tooltip, Legend);
@@ -77,7 +78,9 @@ const Page = () => {
   }
 
   if (!project) {
-    return <div className="ml-[110px]">Loading...</div>;
+    return <div className="">
+        <LottieAnimation/>
+    </div>;
   }
 
   // Pie chart data and options

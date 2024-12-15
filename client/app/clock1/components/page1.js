@@ -78,7 +78,7 @@ const Page2 = () => {
       setIsWorkTime(false);
       setSessionType("Break");
       confetti();
-      toast.success("Time for a break!");
+   
 
       sendMessage("It's break time! Take a rest!");
     } else {
@@ -87,6 +87,7 @@ const Page2 = () => {
       setSessionType("Work");
 
       sendMessage("It's work time! Get back to focus!");
+     
     }
   };
 

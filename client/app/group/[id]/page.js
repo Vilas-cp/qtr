@@ -6,6 +6,7 @@ import { sanityClient } from "../../../sanity"; // Adjust this to your Sanity cl
 import Pending from "./components/Pending";
 import Completed from "./components/Completed";
 import { useRouter } from "next/navigation";
+import LottieAnimation from "@/app/components/Loading";
 const UserDetails = () => {
   const router = useRouter();
   const params = useParams();
@@ -149,8 +150,10 @@ const UserDetails = () => {
 
   if (loading || !project) {
     return (
-      <div className="ml-[110px]">
-        <h1 className="text-2xl font-bold mb-4">Loading...</h1>
+      <div className="">
+       <div className="flex items-center justify-center h-screen">
+        <LottieAnimation/>
+       </div>
       </div>
     );
   }
