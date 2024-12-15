@@ -29,7 +29,7 @@ function Pending({ tasks, toggleTaskStatus }) {
                   className={`px-3 ml-2 py-1 text-white rounded-sm cursor-pointer ${
                     task.status === "pending" ? "bg-[#ff2732]" : "bg-green-500"
                   }`}
-                  onClick={() => console.log(task._id)} 
+                  onClick={() => toggleTaskStatus(task.taskId, task.status)} // Pass taskId here
                 >
                   {task.status}
                 </span>

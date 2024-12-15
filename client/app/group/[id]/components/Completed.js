@@ -3,7 +3,7 @@ import { useUser } from "@clerk/nextjs";
 
 function Completed({ tasks }) {
   const { isSignedIn, user } = useUser();
-console.log(tasks);
+
 
   if (!isSignedIn) {
     return <p>Please sign in to view your tasks.</p>;
@@ -29,7 +29,7 @@ console.log(tasks);
                 <span
                   className={`px-3 ml-2 py-1 text-white rounded-sm ${
                     task.status === "pending" ? "bg-[#ff2732]" : "bg-green-500"
-                  }`}
+                  }`}   onClick={() => toggleTaskStatus(task.taskId, task.status)} 
                 >
                   {task.status}
                 </span>
