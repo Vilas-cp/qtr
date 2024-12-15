@@ -271,7 +271,7 @@ const UserDetails = () => {
                 onChange={(e) => setDueDate(e.target.value)}
               />
               <button
-                className="bg-blue-500 text-white py-2 px-4"
+                className="bg-[#7f8ac6] text-white py-2 px-4"
                 onClick={handleAddTask}
               >
                 Add Task
@@ -284,9 +284,9 @@ const UserDetails = () => {
       <div className="flex gap-2">
         <div className="flex-1">
           <h2 className="text-xl font-semibold mb-3">All Tasks</h2>
-          <ul className="space-y-4 overflow-scroll">
+          <ul className="space-y-4 overflow-y-scroll overflow-x-hidden h-[600px] bg-gray-100 px-2 py-2">
             {project.tasks?.map((task, index) => (
-              <li key={index} className="border p-4 rounded-md">
+              <li key={index} className="border p-4 rounded-md bg-white">
                 <h3 className="font-medium text-lg">{task.taskTitle}</h3>
                 <p className="text-gray-500 mt-2">{task.taskDescription}</p>
                 <p className="text-gray-500 mt-2">{task.priority}</p>
@@ -298,8 +298,8 @@ const UserDetails = () => {
                   <span
                     className={`px-3 ml-2 py-1 text-white rounded-sm ${
                       task.status === "pending"
-                        ? "bg-[#ff2732]"
-                        : "bg-green-500"
+                        ? "bg-[#d79497]"
+                        : "bg-[#95e0dc]"
                     }`}
                   >
                     {task.status}

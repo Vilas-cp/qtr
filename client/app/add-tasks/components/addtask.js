@@ -248,7 +248,7 @@ const TaskForm = () => {
         <h2 className="text-[50px] font-bold pb-5">
            Task List
             </h2>
-        <ul className="space-y-2 w-[500px] pb-[100px]">
+        <ul className="space-y-2 w-[900px] pb-[100px] h-[600px] overflow-x-hidden overflow-y-scroll">
           {tasks.map((task) => (
             <li
               key={task._id}

@@ -1,12 +1,13 @@
 "use client";
 
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 const Sidebar = () => {
   return (
     <div className="fixed top-0 left-0 h-full w-[100px] bg-gray-50 text-black shadow-lg border-r-[0.5px] border-gray-300 flex flex-col justify-between z-40">
       <nav className="mt-4 flex flex-col space-y-8 px-4">
-        <a href="/" className="px-4 py-2 rounded">
+        <Link href="/" className="px-4 py-2 rounded">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -21,7 +22,7 @@ const Sidebar = () => {
               d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
             />
           </svg>
-        </a>
+        </Link>
         <a href="/add-tasks" className="px-4 py-2 rounded">
           <svg
             xmlns="http://www.w3.org/2000/svg"

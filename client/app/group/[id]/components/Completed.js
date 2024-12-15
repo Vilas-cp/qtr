@@ -24,10 +24,10 @@ function Completed({ tasks, toggleTaskStatus }) {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-5 text-gray-800">
+      <h2 className="text-xl font-semibold mb-3 text-gray-800">
         Completed Tasks
       </h2>
-      <ul className="space-y-4 overflow-y-auto">
+      <ul className="space-y-4 overflow-y-auto h-[600px] p-2 bg-gray-100">
         {tasks
           ?.filter(
             (task) =>
@@ -38,7 +38,7 @@ function Completed({ tasks, toggleTaskStatus }) {
           .map((task, index) => (
             <li
               key={index}
-              className="border border-gray-300 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 ease-in-out"
+              className="border border-gray-300 bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 ease-in-out"
             >
               <h3 className="font-medium text-xl text-gray-800">
                 {task.taskTitle}
@@ -49,7 +49,7 @@ function Completed({ tasks, toggleTaskStatus }) {
                 <span className="font-semibold text-gray-700">Status:</span>{" "}
                 <span
                   className={`px-3 py-1 text-white rounded-sm ${
-                    task.status === "pending" ? "bg-[#ff2732]" : "bg-green-500"
+                    task.status === "pending" ? "bg-[#d79497]" : "bg-[#95e0dc]"
                   } cursor-pointer`}
                   onClick={() => toggleTaskStatus(task.taskId, task.status)} // Pass taskId here
                 >
@@ -75,12 +75,12 @@ function Completed({ tasks, toggleTaskStatus }) {
 
               <p className="pt-[10px]">
                 <span
-                  className={`px-3 py-1 text-white rounded-full ${
+                  className={`px-3 py-1 text-white rounded-sm ${
                     task.priority === "high"
-                      ? "bg-[#ff2732]"
+                      ? "bg-[#e1bff2]"
                       : task.priority === "medium"
-                      ? "bg-[#ffc107]"
-                      : "bg-[#28a745]"
+                      ? "bg-[#f7d7a7]"
+                      : "bg-[#95e0dc]"
                   }`}
                 >
                   {task.priority}
@@ -155,10 +155,10 @@ function Completed({ tasks, toggleTaskStatus }) {
                   <span
                     className={`px-3 py-1 text-white rounded-full ${
                       selectedTask.priority === "high"
-                        ? "bg-[#ff2732]"
-                        : selectedTask.priority === "medium"
-                        ? "bg-[#ffc107]"
-                        : "bg-[#28a745]"
+                      ? "bg-[#e1bff2]"
+                      : task.priority === "medium"
+                      ? "bg-[#f7d7a7]"
+                      : "bg-[#95e0dc]"
                     }`}
                   >
                     {selectedTask.priority}

@@ -146,7 +146,7 @@ const Page2 = () => {
   return (
     <div>
       <div className="flex items-center justify-center w-full h-screen flex-col relative">
-        <div className="bg-[#353738] px-[15px] py-[4px] rounded-t-[10px] border-[10px] border-black border-b-0 ml-[240px]"></div>
+        <div className="bg-[#353738] px-[15px] py-[4px] rounded-t-[10px] border-[10px] border-black border-b-0 ml-[240px] text-white font-medium">{sessionType}</div>
         <div className="bg-[#99acf8] h-[250px] w-[400px] rounded-[40px] shadow-2xl flex items-center justify-center border-[10px] border-black flex-col">
           <div className="bg-[#f7f4e5] h-[150px] w-[325px] rounded-[10px] mb-[20px] border-[10px] border-black flex items-center justify-center">
             <div className={teko1.className}>
@@ -186,7 +186,7 @@ const Page2 = () => {
           </div>
         </div>
         <div className="bg-[#353738] px-[150px] py-[8px] rounded-b-[10px] border-[10px] border-black border-t-0"></div>
-        <div className="text-xl pt-[10px]">{sessionType}</div>{" "}
+    
         {/* Display Work/Break next to clock */}
         <div className="absolute top-0 right-[200px]" suppressHydrationWarning>
           {isWorkTime ? <LottieWork /> :<LottieAnimation/> }

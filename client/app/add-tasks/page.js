@@ -4,7 +4,7 @@ import TaskForm from './components/addtask'
 
 const Page = () => {
   return (
-    <div>
+    <div className='ml-[100px]'>
       <Sidebar/>
       <TaskForm/>
     </div>

@@ -25,7 +25,7 @@ function Pending({ tasks, toggleTaskStatus }) {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-3">Pending</h2>
-      <ul className="space-y-4 overflow-scroll">
+      <ul className="space-y-4 overflow-y-scroll overflow-x-hidden bg-gray-100 px-2 py-2 h-[600px]">
         {tasks
           ?.filter(
             (task) =>
@@ -34,14 +34,14 @@ function Pending({ tasks, toggleTaskStatus }) {
               task.assignedTo.email === user.primaryEmailAddress?.emailAddress
           )
           .map((task, index) => (
-            <li key={index} className="border p-4 rounded-md">
+            <li key={index} className="border p-4 rounded-md bg-white ">
               <h3 className="font-medium text-lg">{task.taskTitle}</h3>
               <p className="text-gray-500 mt-2">{task.taskDescription}</p>
               <p className="text-sm mt-2">
                 <span className="font-semibold">Status:</span>
                 <span
                   className={`px-3 ml-2 py-1 text-white rounded-sm cursor-pointer ${
-                    task.status === "pending" ? "bg-[#ff2732]" : "bg-green-500"
+                    task.status === "pending" ? "bg-[#d79497]" : "bg-[#95e0dc]"
                   }`}
                   onClick={() => toggleTaskStatus(task.taskId, task.status)} // Pass taskId here
                 >
@@ -66,10 +66,10 @@ function Pending({ tasks, toggleTaskStatus }) {
                 <span
                   className={`px-3 py-1 text-white rounded-sm ${
                     task.priority === "high"
-                      ? "bg-[#ff2732]"
+                      ? "bg-[#e1bff2]"
                       : task.priority === "medium"
-                      ? "bg-[#ffc107]"
-                      : "bg-[#28a745]"
+                      ? "bg-[#f7d7a7]"
+                      : "bg-[#95e0dc]"
                   }`}
                 >
                   {task.priority}
