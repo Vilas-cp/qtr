@@ -252,7 +252,7 @@ const TaskForm = () => {
           {tasks.map((task) => (
             <li
               key={task._id}
-              className="p-4 border border-gray-200 flex hover:bg-gray-100 items-center  space-x-4 cursor-pointer"
+              className="p-4 border border-gray-200 flex hover:bg-gray- items-center  space-x-4 cursor-pointer"
               onClick={() => router.push(`/clock2/${task._id}`)}
             >
               <div>
