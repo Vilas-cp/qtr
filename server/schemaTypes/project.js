@@ -60,7 +60,6 @@ export default {
               options: {
                 list: [
                   { title: 'Pending', value: 'pending' },
-                  { title: 'In Progress', value: 'in-progress' },
                   { title: 'Completed', value: 'completed' },
                 ],
               },
