@@ -30,6 +30,20 @@ export default {
       validation: (Rule) => Rule.required(),
     },
     {
+      name: 'priority',
+      type: 'string',
+      title: 'Task Priority',
+      options: {
+        list: [
+          { title: 'High', value: 'high' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'Low', value: 'low' },
+        ],
+      },
+      description: 'Set the priority level of the task.',
+      validation: (Rule) => Rule.required(),
+    },
+    {
       name: 'dueDate',
       type: 'datetime',
       title: 'Due Date',
