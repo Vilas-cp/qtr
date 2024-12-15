@@ -369,6 +369,8 @@ const Flowable = () => {
           onClick={() => {
             setDialogOpen(false);
             setReport(null); 
+            window.location.reload();
+            
           }}
           style={{
             position: "absolute",

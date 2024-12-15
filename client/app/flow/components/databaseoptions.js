@@ -29,7 +29,7 @@ export default function Databaseoptions({
         </div>
         <button
           aria-label="Delete Task Node"
-          className="text-red-500 bg-transparent hover:text-red-700 focus:outline-none"
+          className="text-black bg-transparent  focus:outline-none"
           onClick={() =>
             setNodes((prevNodes) =>
               prevNodes.filter((node) => node.id !== id)

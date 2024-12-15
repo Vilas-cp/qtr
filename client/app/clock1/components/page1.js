@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { Teko } from "next/font/google";
 import confetti from "canvas-confetti";
-import LottieAnimation from "./Lottiecomp";
-import LottieWork from "./LottieWork";
-import LottieWo from "./CatChecked";
+import dynamic from "next/dynamic";
+
+const LottieAnimation = dynamic(() => import("./Lottiecomp"), { ssr: false });
+const LottieWork = dynamic(() => import("./LottieWork"), { ssr: false });
+const LottieWo = dynamic(() => import("./CatChecked"), { ssr: false });
 const teko1 = Teko({ subsets: ["latin"], weight: "400" });
 
 const Page2 = () => {
@@ -184,12 +186,12 @@ const Page2 = () => {
         <div className="bg-[#353738] px-[150px] py-[8px] rounded-b-[10px] border-[10px] border-black border-t-0"></div>
         <div className="text-xl pt-[10px]">{sessionType}</div>{" "}
         {/* Display Work/Break next to clock */}
-        <div className="absolute top-0 right-[200px]">
-  {isWorkTime ? <LottieAnimation /> : <LottieWork />}
-</div>
-<div className="absolute bottom-10 left-[200px]">
-  <LottieWo/>
-</div>
+        <div className="absolute top-0 right-[200px]" suppressHydrationWarning>
+          {isWorkTime ? <LottieWork /> :<LottieAnimation/> }
+        </div>
+        <div className="absolute bottom-10 left-[200px]" suppressHydrationWarning>
+          <LottieWo />
+        </div>
       </div>
     </div>
   );

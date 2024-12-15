@@ -7,6 +7,7 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import "./globals.css";
+import Sidebar from "./clock1/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,12 +33,7 @@ export default function RootLayout({ children }) {
         >
           {" "}
          
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+         <Sidebar/>
          
           {children}
         </body>
