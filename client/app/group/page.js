@@ -72,7 +72,7 @@ const UserInfo = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare the new project data to send to Sanity
+
     const newProjectData = {
       _type: "project",
       projectName: newProject.projectName,
@@ -115,17 +115,22 @@ const UserInfo = () => {
 
   return (
     <div className="ml-[110px]">
+      <div className="flex items-center justify-between mt-5">
+      <div>
       <h2 className="text-2xl font-bold mb-4">Welcome, {user.firstName}!</h2>
       <p className="text-sm text-gray-600 mb-4">
         Email: {user.primaryEmailAddress?.emailAddress}
       </p>
+      </div>
+      
 
       <button
         onClick={() => setShowForm((prev) => !prev)}
-        className="bg-[#7f8ac6] text-white p-3 rounded-md mt-6 shadow transition duration-200"
+        className="bg-[#7f8ac6] text-white p-3 rounded-md mt-6 shadow mr-8"
       >
         {showForm ? "Close Form" : "Add New Project"}
       </button>
+      </div>
       {/* Display Projects */}
       <div className="flex gap-8">
       <div className="flex-1">
@@ -135,7 +140,7 @@ const UserInfo = () => {
           <li
             key={project._id}
             className="border border-gray-300 p-4 rounded-md hover:bg-gray-50 transition duration-200 cursor-pointer"
-            onClick={() => handleNavigation(project._id)}
+         
           >
             <h4 className="font-semibold text-lg">{project.projectName}</h4>
             <p className="text-sm text-gray-500 mt-2">
@@ -160,8 +165,11 @@ const UserInfo = () => {
 
       {/* Sidebar Form (Right Slide) */}
       {showForm && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 z-30" />
+      )}
+      {showForm && (
         <div
-          className={`fixed top-0 right-0 w-[500px] h-full bg-white shadow-lg z-50 transform transition-all duration-800 ease-in-out ${
+          className={`fixed top-0 right-0 w-[500px] h-full bg-white shadow-lg z-50 transform transition-all duration-700 ease-in-out ${
             showForm ? "translate-x-0" : "translate-x-full"
           }`}
         >
