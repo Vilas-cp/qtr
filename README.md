@@ -40,7 +40,7 @@ A comprehensive web application for boosting your productivity and team collabor
 ### Clone the Repository:
 ```bash
 git clone https://github.com/Vilas-cp/qtr.git
-cd productivity-tracker
+
 ```
 
 ### Set Up Environment Variables
