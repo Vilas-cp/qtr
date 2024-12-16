@@ -30,15 +30,7 @@ export default {
         },
         validation: (Rule) => Rule.required(),
       },
-      {
-        name: 'profilePicture',
-        type: 'image',
-        title: 'Profile Picture',
-        description: 'Upload a profile picture for the user',
-        options: {
-          hotspot: true,
-        },
-      },
+     
       {
         name: 'joinedAt',
         type: 'datetime',

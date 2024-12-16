@@ -1,7 +1,7 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { sanityClient } from "../../sanity";
 import { v4 as uuidv4 } from "uuid";
 import MyProjects from "./components/Oldprojects";
@@ -20,22 +20,24 @@ const UserInfo = () => {
   const [allUsers, setAllUsers] = useState([]);
   
 
-  const [isUserChecked, setIsUserChecked] = useState(false);  // Prevents rechecking if the user has been added already
+  const isUserChecked = useRef(false);  // useRef does not trigger re-renders
+  
 
-  // Function to check if the user already exists in Sanity
   const userExistsInSanity = async (email) => {
-    const query = `*[_type == "user" && email == $email][0]`;
-    const params = { email };  // Email passed as parameter
+    console.log("Checking if user exists in Sanity:", email);
+    
+    const query = `*[_type == "user" && email == "${email}"][0]`;
+    const params = { email }; 
     
     const existingUser = await sanityClient.fetch(query, params);
-    return existingUser; // Returns the user if exists, or null if not
+    return existingUser; 
   };
 
-  // Function to add the user to Sanity if not already present
+
   const addUserToSanity = async () => {
-    if (user && !isUserChecked) {
+    if (user && !isUserChecked.current) {
       try {
-        setIsUserChecked(true); // Prevent re-checking
+        isUserChecked.current = true; // Prevent re-checking
         
         const existingUser = await userExistsInSanity(user.primaryEmailAddress?.emailAddress);
 
@@ -49,14 +51,7 @@ const UserInfo = () => {
           _type: 'user', // Ensure this matches your schema type in Sanity
           name: user.fullName, // Clerk's user object provides fullName
           email: user.primaryEmailAddress?.emailAddress, // Clerk's user object provides email
-          role: 'member',  // You can modify the role based on your requirements
-          profilePicture: {
-            _type: 'image',
-            asset: {
-              _type: 'reference',
-              _ref: user.profileImageUrl, // Assuming Clerk has profileImageUrl
-            },
-          },
+          role: 'member',  // You can modify the role based on your requirement
           joinedAt: new Date().toISOString(), // Current date and time
         });
 
@@ -72,8 +67,7 @@ const UserInfo = () => {
     if (user) {
       addUserToSanity();
     }
-  }, [user, isUserChecked]);
-
+  }, [user]);
   // Fetch projects from Sanity
   const fetchProjects = async () => {
     try {
@@ -101,7 +95,7 @@ const UserInfo = () => {
   const fetchUsers = async () => {
     try {
       const users = await sanityClient.fetch(`
-        *[_type == "user"]{_id, name, email, role, profilePicture}
+        *[_type == "user"]{_id, name, email, role}
       `);
       setAllUsers(users);
     } catch (error) {
@@ -115,7 +109,7 @@ const UserInfo = () => {
       fetchProjects();
       fetchUsers();
     }
-  }, [isSignedIn]);
+  }, [isSignedIn,isUserChecked.current]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
