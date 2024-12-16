@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
       >
         <Sidebar />
         <main>{children}</main>
-        <Toaster />
+        <Toaster position="bottom-right"/>
       </div>
     </ClerkLoaded>
   );

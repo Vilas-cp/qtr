@@ -15,7 +15,7 @@ export default {
       type: 'text',
       title: 'Project Description',
       description: 'Provide a detailed description of the project',
-      validation: (Rule) => Rule.required().min(10),
+      validation: (Rule) => Rule.required().min(3),
     },
     {
       name: 'members',

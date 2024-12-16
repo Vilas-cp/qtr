@@ -156,7 +156,7 @@ function Completed({ tasks, toggleTaskStatus }) {
                     className={`px-3 py-1 text-white rounded-full ${
                       selectedTask.priority === "high"
                       ? "bg-[#e1bff2]"
-                      : task.priority === "medium"
+                      : tasks.priority === "medium"
                       ? "bg-[#f7d7a7]"
                       : "bg-[#95e0dc]"
                     }`}

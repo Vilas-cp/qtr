@@ -208,7 +208,8 @@ const UserDetails = () => {
           <div className="bg-white p-6 w-96 h-full shadow-lg relative">
             <button
               className="absolute top-5 right-4 "
-              onClick={() => setShowDialog(false)}
+              onClick={() => window.location.reload() && setShowDialog(false) }
+
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -250,6 +251,13 @@ const UserDetails = () => {
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
               </select>
+              <label className="block mb-2">Due Date</label>
+              <input
+                type="datetime-local"
+                className="border p-2 w-full mb-4"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+              />
               <label className="block mb-2">Assign To</label>
               <select
                 className="border p-2 w-full mb-4"
@@ -266,13 +274,7 @@ const UserDetails = () => {
                 ))}
               </select>
 
-              <label className="block mb-2">Due Date</label>
-              <input
-                type="datetime-local"
-                className="border p-2 w-full mb-4"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
+            
               <button
                 className="bg-[#7f8ac6] text-white py-2 px-4"
                 onClick={handleAddTask}

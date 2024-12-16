@@ -81,6 +81,7 @@ const Page2 = () => {
    
 
       sendMessage("It's break time! Take a rest!");
+      toast.success("Break time started!");
     } else {
       setTime(25 * 60);
       setIsWorkTime(true);
