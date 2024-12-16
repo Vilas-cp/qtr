@@ -18,6 +18,61 @@ const UserInfo = () => {
   });
   const [showForm, setShowForm] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
+  
+
+  const [isUserChecked, setIsUserChecked] = useState(false);  // Prevents rechecking if the user has been added already
+
+  // Function to check if the user already exists in Sanity
+  const userExistsInSanity = async (email) => {
+    const query = `*[_type == "user" && email == $email][0]`;
+    const params = { email };  // Email passed as parameter
+    
+    const existingUser = await sanityClient.fetch(query, params);
+    return existingUser; // Returns the user if exists, or null if not
+  };
+
+  // Function to add the user to Sanity if not already present
+  const addUserToSanity = async () => {
+    if (user && !isUserChecked) {
+      try {
+        setIsUserChecked(true); // Prevent re-checking
+        
+        const existingUser = await userExistsInSanity(user.primaryEmailAddress?.emailAddress);
+
+        if (existingUser) {
+          console.log('User already exists in Sanity:', existingUser);
+          return;  
+        }
+
+        // Create user document in Sanity
+        const result = await sanityClient.create({
+          _type: 'user', // Ensure this matches your schema type in Sanity
+          name: user.fullName, // Clerk's user object provides fullName
+          email: user.primaryEmailAddress?.emailAddress, // Clerk's user object provides email
+          role: 'member',  // You can modify the role based on your requirements
+          profilePicture: {
+            _type: 'image',
+            asset: {
+              _type: 'reference',
+              _ref: user.profileImageUrl, // Assuming Clerk has profileImageUrl
+            },
+          },
+          joinedAt: new Date().toISOString(), // Current date and time
+        });
+
+        console.log('User added to Sanity:', result);
+      } catch (error) {
+        console.error('Error adding user to Sanity:', error);
+      }
+    }
+  };
+
+  // Call addUserToSanity when the component loads
+  useEffect(() => {
+    if (user) {
+      addUserToSanity();
+    }
+  }, [user, isUserChecked]);
 
   // Fetch projects from Sanity
   const fetchProjects = async () => {
@@ -112,6 +167,7 @@ const UserInfo = () => {
     );
   }
   
+
 
 
   return (
